@@ -1,0 +1,1505 @@
+(24,4,2,3)
+=== Physical plan 0
+HashAggregate (15)
++- HashAggregate (14)
+   +- Project (13)
+      +- BroadcastHashJoin Inner BuildRight (12)
+         :- Project (8)
+         :  +- BroadcastHashJoin Inner BuildRight (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) HashAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) HashAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 1
+HashAggregate (15)
++- HashAggregate (14)
+   +- Project (13)
+      +- BroadcastHashJoin Inner BuildRight (12)
+         :- Project (8)
+         :  +- SortMergeJoin Inner (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) HashAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) HashAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 2
+HashAggregate (15)
++- HashAggregate (14)
+   +- Project (13)
+      +- SortMergeJoin Inner (12)
+         :- Project (8)
+         :  +- BroadcastHashJoin Inner BuildRight (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) HashAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) HashAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 3
+HashAggregate (15)
++- HashAggregate (14)
+   +- Project (13)
+      +- SortMergeJoin Inner (12)
+         :- Project (8)
+         :  +- SortMergeJoin Inner (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) HashAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) HashAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 4
+SortAggregate (15)
++- HashAggregate (14)
+   +- Project (13)
+      +- BroadcastHashJoin Inner BuildRight (12)
+         :- Project (8)
+         :  +- BroadcastHashJoin Inner BuildRight (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) HashAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) SortAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 5
+SortAggregate (15)
++- HashAggregate (14)
+   +- Project (13)
+      +- BroadcastHashJoin Inner BuildRight (12)
+         :- Project (8)
+         :  +- SortMergeJoin Inner (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) HashAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) SortAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 6
+SortAggregate (15)
++- HashAggregate (14)
+   +- Project (13)
+      +- SortMergeJoin Inner (12)
+         :- Project (8)
+         :  +- BroadcastHashJoin Inner BuildRight (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) HashAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) SortAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 7
+SortAggregate (15)
++- HashAggregate (14)
+   +- Project (13)
+      +- SortMergeJoin Inner (12)
+         :- Project (8)
+         :  +- SortMergeJoin Inner (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) HashAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) SortAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 8
+HashAggregate (15)
++- SortAggregate (14)
+   +- Project (13)
+      +- BroadcastHashJoin Inner BuildRight (12)
+         :- Project (8)
+         :  +- BroadcastHashJoin Inner BuildRight (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) SortAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) HashAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 9
+HashAggregate (15)
++- SortAggregate (14)
+   +- Project (13)
+      +- BroadcastHashJoin Inner BuildRight (12)
+         :- Project (8)
+         :  +- SortMergeJoin Inner (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) SortAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) HashAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 10
+HashAggregate (15)
++- SortAggregate (14)
+   +- Project (13)
+      +- SortMergeJoin Inner (12)
+         :- Project (8)
+         :  +- BroadcastHashJoin Inner BuildRight (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) SortAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) HashAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 11
+HashAggregate (15)
++- SortAggregate (14)
+   +- Project (13)
+      +- SortMergeJoin Inner (12)
+         :- Project (8)
+         :  +- SortMergeJoin Inner (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) SortAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) HashAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 12
+SortAggregate (15)
++- SortAggregate (14)
+   +- Project (13)
+      +- BroadcastHashJoin Inner BuildRight (12)
+         :- Project (8)
+         :  +- BroadcastHashJoin Inner BuildRight (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) SortAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) SortAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 13
+SortAggregate (15)
++- SortAggregate (14)
+   +- Project (13)
+      +- BroadcastHashJoin Inner BuildRight (12)
+         :- Project (8)
+         :  +- SortMergeJoin Inner (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) SortAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) SortAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 14
+SortAggregate (15)
++- SortAggregate (14)
+   +- Project (13)
+      +- SortMergeJoin Inner (12)
+         :- Project (8)
+         :  +- BroadcastHashJoin Inner BuildRight (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) BroadcastHashJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) SortAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) SortAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]
+=== Physical plan 15
+SortAggregate (15)
++- SortAggregate (14)
+   +- Project (13)
+      +- SortMergeJoin Inner (12)
+         :- Project (8)
+         :  +- SortMergeJoin Inner (7)
+         :     :- Project (3)
+         :     :  +- Filter (2)
+         :     :     +- Scan csv  (1)
+         :     +- Project (6)
+         :        +- Filter (5)
+         :           +- Scan csv  (4)
+         +- Project (11)
+            +- Filter (10)
+               +- Scan csv  (9)
+
+
+(1) Scan csv 
+Output [2]: [id#192, production_year#196]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/title.csv]
+PushedFilters: [IsNotNull(production_year), GreaterThan(production_year,1990), IsNotNull(id)]
+ReadSchema: struct<id:int,production_year:int>
+
+(2) Filter
+Input [2]: [id#192, production_year#196]
+Condition : ((isnotnull(production_year#196) AND (production_year#196 > 1990)) AND isnotnull(id#192))
+
+(3) Project
+Output [1]: [id#192]
+Input [2]: [id#192, production_year#196]
+
+(4) Scan csv 
+Output [2]: [movie_id#137, info_type_id#138]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_info_idx.csv]
+PushedFilters: [IsNotNull(info_type_id), EqualTo(info_type_id,101), IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int,info_type_id:int>
+
+(5) Filter
+Input [2]: [movie_id#137, info_type_id#138]
+Condition : ((isnotnull(info_type_id#138) AND (info_type_id#138 = 101)) AND isnotnull(movie_id#137))
+
+(6) Project
+Output [1]: [movie_id#137]
+Input [2]: [movie_id#137, info_type_id#138]
+
+(7) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#137]
+Join condition: None
+
+(8) Project
+Output [1]: [id#192]
+Input [2]: [id#192, movie_id#137]
+
+(9) Scan csv 
+Output [1]: [movie_id#147]
+Batched: false
+Location: InMemoryFileIndex [hdfs://11.167.227.34:9000/datasets/imdb/movie_keyword.csv]
+PushedFilters: [IsNotNull(movie_id)]
+ReadSchema: struct<movie_id:int>
+
+(10) Filter
+Input [1]: [movie_id#147]
+Condition : isnotnull(movie_id#147)
+
+(11) Project
+Output [1]: [movie_id#147]
+Input [1]: [movie_id#147]
+
+(12) SortMergeJoin
+Left keys [1]: [id#192]
+Right keys [1]: [movie_id#147]
+Join condition: None
+
+(13) Project
+Output: []
+Input [2]: [id#192, movie_id#147]
+
+(14) SortAggregate
+Input: []
+Keys: []
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#219L]
+Results [1]: [count#220L]
+
+(15) SortAggregate
+Input [1]: [count#220L]
+Keys: []
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#216L]
+Results [1]: [count(1)#216L AS count(1)#217L]

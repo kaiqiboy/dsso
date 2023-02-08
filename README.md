@@ -59,13 +59,24 @@ spark.sql.objectHashAggregate.sortBased.fallbackThreshold | Set this native conf
 
 ## Usage: DL model development
 
+Dependencies (from `pip`):
+```
+pytorch
+scikit-learn
+fse
+gensim
+```
+
 - Data generation
-    ``` cd dsso-dev```
+
+    ```cd dsso-dev```
 
     `RecordQueryTime.scala` explains the process of generating training data 
 
 - Moel training
 
-    ``` cd dsso-dev```
+    ```cd dsso-dev```
 
-    First run `node_embedding`, then run `lstm`
+    First run `node_embedding_xxx.ipynb`, then run `lstm_xxx.ipynb`.
+
+    Once the model is trained, move the trained model and the encoding files to `./dsso-deploy`.

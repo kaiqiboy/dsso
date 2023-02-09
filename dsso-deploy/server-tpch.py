@@ -17,14 +17,16 @@ import pickle
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-ip", type=str, nargs='?', default="11.167.226.172") # ip
+    parser.add_argument("-ip", type=str, nargs='?', default="127.0.0.1") # ip
     parser.add_argument("-p", type=str, nargs='?', default="8308") # port
-    parser.add_argument("-m", type=str, nargs='?', default="./tpch/model-tpch.pt") # model weights
+    parser.add_argument("-m", type=str, nargs='?', default="./tpch/model.pt") # model weights
     parser.add_argument("-d", type=str, nargs='?', default="./tpch") # metadata dir
 
     args = parser.parse_args()
 
-    device = 'cuda'
+    if torch.cuda.is_available():
+      device = 'cuda' 
+    else: device = 'cpu'
 
     server = socket.socket()
     server.bind((args.ip,int(args.p)))

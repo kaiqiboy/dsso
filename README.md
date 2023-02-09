@@ -17,7 +17,7 @@ Big data query systems like Spark SQL rely on rule-based methods to select an ex
 
 - The queries used for DL model development is located at `./data`
 
-
+The complimentary data including the example training physical plans and the trained word2vec models can be downloaded from [here](https://drive.google.com/drive/folders/1hY41lU7s6CPEbT1BS9cOrhrEs3H4nxzk?usp=sharing).
 ## Usage: DL-enhanced Spark SQL Execution
 
 - Build the modified Spark 

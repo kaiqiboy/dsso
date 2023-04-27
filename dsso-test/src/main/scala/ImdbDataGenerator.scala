@@ -283,6 +283,7 @@ class ImdbDataGenerator(dataDir: String) extends DataGenerator {
   val dfNameMap: Map[String, String] = dfNameArr.toMap
 
   def createTable: Unit = {
+    clean
     akaNameDf.write.mode("overwrite").saveAsTable("aka_name")
     akaTitleDf.write.mode("overwrite").saveAsTable("aka_title")
     castInfoDf.write.mode("overwrite").saveAsTable("cast_info")

@@ -265,6 +265,17 @@ class TpchDataGenerator(dir: String) extends DataGenerator {
     }
   }
 
+  override def createTable(): Unit = {
+    clean
+    dfMap.foreach { x =>
+      x._2.write.mode("overwrite").saveAsTable(x._1)
+    }
+    dfNameArr.map { n =>
+      val name = n._2
+      spark.sql(s"ANALYZE TABLE $name COMPUTE STATISTICS FOR ALL COLUMNS")
+    }
+  }
+
   def writeParquet(): Unit = {
     dfMap.values.foreach(x => x.persist(StorageLevel.MEMORY_AND_DISK))
     for ((name, df) <- dfMap) {

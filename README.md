@@ -38,7 +38,7 @@ bash DIR_TO_MODIFIED_SPARK/bin/spark-submit\
     --conf spark.sql.objectHashAggregate.sortBased.fallbackThreshold=4096\
     --conf spark.sql.ceo=true\
     --conf spark.sql.ceoDir=xxx/cost-estimation-deploy\
-    --conf spark.sql.ceoServerIP=localhost\
+    --conf spark.sql.ceoServerIP=127.0.0.1\
     --conf spark.sql.ceoPruneAggressive=true\
     --conf spark.sql.ceoMetadataDir=xxx/xx-metadata\
     --conf spark.sql.ceoLengthThreshold=32\

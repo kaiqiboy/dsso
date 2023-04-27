@@ -5,3 +5,6 @@ dsso-test/project
 dsso-test/production
 dsso-deploy/imdb/usif_imdb.wv.vectors_ngrams.npy
 dsso-deploy/tpch/usif_tpch.wv.vectors_ngrams.npy
+spark-3.2.1-modified
+dsso-deploy/fse
+tmp

@@ -1,0 +1,7 @@
+.idea
+dsso-test/lib
+dsso-test/target
+dsso-test/project
+dsso-test/production
+dsso-deploy/imdb/usif_imdb.wv.vectors_ngrams.npy
+dsso-deploy/tpch/usif_tpch.wv.vectors_ngrams.npy

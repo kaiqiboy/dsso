@@ -9,15 +9,15 @@ Existing distributed data query systems like Spark SQL rely on manually crafted 
 
 - The modified Spark is located at `./spark-3.2.1-modified`
 
-- The deep cost estimiation *development* module is located at `./dsso-dev`
+- The deep cost estimation *development* module is located at `./dsso-dev`
 
-- The deep cost estimiation *deployment* module is located at `./dsso-deploy` 
+- The deep cost estimation *deployment* module is located at `./dsso-deploy` 
 
 - Scala code for training data generation and end-to-end evaluation is located at `./dsso-test` 
 
 - The queries used for DL model development is located at `./data`
 
-The complimentary data including the example training physical plans and the trained word2vec models can be downloaded from [here](https://drive.google.com/drive/folders/1hY41lU7s6CPEbT1BS9cOrhrEs3H4nxzk?usp=sharing).
+The complementary data including the example training physical plans and the trained word2vec models can be downloaded from [here](https://drive.google.com/drive/folders/1hY41lU7s6CPEbT1BS9cOrhrEs3H4nxzk?usp=sharing).
 ## Usage: DL-enhanced Spark SQL Execution
 
 - Build the modified Spark 
@@ -29,7 +29,7 @@ The complimentary data including the example training physical plans and the tra
 ```
 bash DIR_TO_MODIFIED_SPARK/bin/spark-submit\
     --class TestXXX\
-    --master spark://gpu1040.sqa.eu95:7077\
+    --master spark://master:7077\
     --executor-memory 16g\
     --total-executor-cores 48\
     --executor-cores 2\
@@ -38,24 +38,24 @@ bash DIR_TO_MODIFIED_SPARK/bin/spark-submit\
     --conf spark.sql.objectHashAggregate.sortBased.fallbackThreshold=4096\
     --conf spark.sql.ceo=true\
     --conf spark.sql.ceoDir=xxx/cost-estimation-deploy\
-    --conf spark.sql.ceoServerIP=xx.xx.xx.xx\
+    --conf spark.sql.ceoServerIP=localhost\
     --conf spark.sql.ceoPruneAggressive=true\
     --conf spark.sql.ceoMetadataDir=xxx/xx-metadata\
     --conf spark.sql.ceoLengthThreshold=32\
     xxx.jar inputArgs
 ```
 
-| Config|  Explantion|
-|-------|------------|
-|spark.sql.autoBroadcastJoinThreshold| Set this native configuration to a large value (8g) to ensure thorough exploration.|
-spark.sql.objectHashAggregate.sortBased.fallbackThreshold | Set this native configuration to a large value (4096) to ensure thorough exploration.|
-|spark.sql.ceo | Set true to enable cost-estimation-based optimization (default = false).|
-|spark.sql.ceoDir | Directory to the deployment folder, which contains the trained model and facilitative files (default = "/").|
-|spark.sql.ceoServerIP | The IP of the DL companion server. If the server is `localhost`, it can be automatically started by SparkSession, otherwise it has to be manually start (default = "127.0.0.1").|
-|spark.sql.ceoServerPort | The port of the DL companion server (default = "8308").|
-|spark.sql.ceoPruneAggressive | Set true to enable aggressive pruning (default = false).|
-|spark.sql.ceoMetadataDir | Directory storing the metada file of the tables (default = "").|
-|spark.sql.ceoLengthThreshold | The plan length threshold of enabling cost-estimation-based optimization (default=500).|
+| Config| Explantion                                                                                                                                                                       |
+|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|spark.sql.autoBroadcastJoinThreshold| Set this native configuration to a large value (8g) to ensure thorough exploration.                                                                                              |
+spark.sql.objectHashAggregate.sortBased.fallbackThreshold | Set this native configuration to a large value (4096) to ensure thorough exploration.                                                                                            |
+|spark.sql.ceo | Set true to enable cost-estimation-based optimization (default = false).                                                                                                         |
+|spark.sql.ceoDir | Directory to the deployment folder, which contains the trained model and facilitative files (default = "/").                                                                     |
+|spark.sql.ceoServerIP | The IP of the DL companion server. If the server is `localhost`, it can be automatically started by SparkSession, otherwise it has to be manually start (default = "127.0.0.1"). |
+|spark.sql.ceoServerPort | The port of the DL companion server (default = "8308").                                                                                                                          |
+|spark.sql.ceoPruneAggressive | Set true to enable aggressive pruning (default = false).                                                                                                                         |
+|spark.sql.ceoMetadataDir | Directory storing the metada file of the tables (default = ""). Better in HDFS.                                                                                                  |
+|spark.sql.ceoLengthThreshold | The plan length threshold of enabling cost-estimation-based optimization (default=500).                                                                                          |
 
 ## Usage: DL model development
 
@@ -66,6 +66,8 @@ scikit-learn
 fse
 gensim
 ```
+
+TPC-H data generation: https://docs.deistercloud.com/content/Databases.30/TPCH%20Benchmark.90/Data%20generation%20tool.30.xml?embedded=true
 
 - Data generation
 
@@ -80,3 +82,9 @@ gensim
     First run `node_embedding_xxx.ipynb`, then run `lstm_xxx.ipynb`.
 
     Once the model is trained, move the trained model and the encoding files to `./dsso-deploy`.
+
+
+## Usage: DSSO test
+
+- ```cd dsso-test; mkdir lib; cp PATH_TO_MODIFIED_JARS/*.jar lib```
+- ```sbt package```

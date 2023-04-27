@@ -1,4 +1,3 @@
-import QueryTimeRecorder.ImdbDataGenerator
 import org.apache.spark.sql.SparkSession
 import scala.concurrent.duration.NANOSECONDS
 import scala.io.Source
@@ -20,7 +19,7 @@ object PythonTestImdb {
       val query = queries(queryId)
 
       val dataGenerator = new ImdbDataGenerator(dataDir)
-      dataGenerator.createTable
+      dataGenerator.createView
       val app = spark.sql(query)
       val start1 = System.nanoTime()
       app.write

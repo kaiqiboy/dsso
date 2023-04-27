@@ -1,4 +1,3 @@
-import QueryTimeRecorder.ImdbDataGenerator
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.execution.ExplainMode
 
@@ -22,7 +21,7 @@ object RecordQueryTimeOriginal {
       val sc = spark.sparkContext
       sc.setLogLevel("ERROR")
       val dataGenerator = new ImdbDataGenerator(dataDir)
-      dataGenerator.createTable
+      dataGenerator.createView
       val app = spark.sql(query)
       val start1 = System.nanoTime()
       val start2 = System.nanoTime()

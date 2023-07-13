@@ -1,6 +1,6 @@
 # Deep Learning based Query Optimization for Spark SQL
  
-Existing distributed data query systems like Spark SQL rely on manually crafted rules to select an execution plan, which is often sub-optimal. While recent studies have attempted to use deep learning models for query optimization in conventional relational databases, integrating deep learning models with Spark SQL poses system challenges in efficient candidate plan exploration and realtime deep learning inference. This paper presents an end-to-end deep-learning-based query optimization that is seamlessly integrated with the native Spark system and practically reduces query execution time. Spark SQL’s core logic is modified to expand the plan exploration space, design an LSTM-based model to estimate the cost of physical execution plans, and establish performance inference of candidate plans. Experimental results evidence that the proposed system leads to over 13% performance improvement on public benchmarks compared to native Spark SQL.
+Existing distributed query systems like Spark SQL rely on manually crafted rules to select an execution plan, which is often sub-optimal. While recent studies have attempted to use deep learning methods for query optimization in conventional relational databases, integrating deep learning models with Spark SQL poses system challenges in efficient candidate plan exploration and real-time deep learning inference. This paper presents an end-to-end deep-learning-based query optimization that is seamlessly integrated with the native Spark system and practically reduces query execution time. Spark SQL’s core logic is adjusted to expand the plan exploration space. An LSTM-based model is devised to estimate the cost of physical execution plans, while real-time performance inference of candidate plans is established. Experimental results evidence that the proposed system leads to over 28% performance improvement on public benchmarks compared to native Spark SQL.
 
 ![Overview of DSSO](./overview.png)
 
@@ -17,7 +17,7 @@ Existing distributed data query systems like Spark SQL rely on manually crafted 
 
 - The queries used for DL model development is located at `./data`
 
-The complementary data including the example training physical plans and the trained word2vec models can be downloaded from [here](https://drive.google.com/drive/folders/1hY41lU7s6CPEbT1BS9cOrhrEs3H4nxzk?usp=sharing).
+
 ## Usage: DL-enhanced Spark SQL Execution
 
 - Build the modified Spark 
